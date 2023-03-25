@@ -7,38 +7,58 @@
 
 import UIKit
 
-class ViewController: UIViewController {
-    @IBOutlet var trafficLightRed: UIView!
-    @IBOutlet var trafficLightYellow: UIView!
-    @IBOutlet var trafficLightGreen: UIView!
+final class ViewController: UIViewController {
+    @IBOutlet var redLight: UIView!
+    @IBOutlet var yellowLight: UIView!
+    @IBOutlet var greenLight: UIView!
+    
     @IBOutlet var startButton: UIButton!
+    
+    private var currentLight = CurrentLight.red
+    private let lightIsOn: CGFloat = 1
+    private let lightIsOff: CGFloat = 0.3
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        trafficLightRed.layer.cornerRadius = trafficLightRed.frame.width / 2
-        trafficLightYellow.layer.cornerRadius = trafficLightYellow.frame.width / 2
-        trafficLightGreen.layer.cornerRadius = trafficLightGreen.frame.width / 2
         startButton.layer.cornerRadius = 10
+        
+        redLight.alpha = lightIsOff
+        yellowLight.alpha = lightIsOff
+        greenLight.alpha = lightIsOff
+    }
+
+    override func viewWillLayoutSubviews() {
+        redLight.layer.cornerRadius = redLight.frame.width / 2
+        yellowLight.layer.cornerRadius = yellowLight.frame.width / 2
+        greenLight.layer.cornerRadius = greenLight.frame.width / 2
+        
+        print("the height is: \(redLight.frame.height)")
     }
     
-    @IBAction func startButtonDidTapped(_ sender: Any) {
-        if trafficLightRed.layer.opacity == 0.3
-            && trafficLightYellow.layer.opacity == 0.3
-            && trafficLightGreen.layer.opacity == 0.3 {
+    @IBAction func startButtonPressed(_ sender: Any) {
+        if startButton.currentTitle == "START" {
             startButton.setTitle("NEXT", for: .normal)
-            trafficLightRed.layer.opacity = 1.0
-            
-        } else if trafficLightRed.layer.opacity == 1.0 {
-            trafficLightRed.layer.opacity = 0.3
-            trafficLightYellow.layer.opacity = 1.0
-            
-        } else if trafficLightYellow.layer.opacity == 1.0 {
-            trafficLightYellow.layer.opacity = 0.3
-            trafficLightGreen.layer.opacity = 1.0
-            
-        } else {
-            trafficLightGreen.layer.opacity = 0.3
-            trafficLightRed.layer.opacity = 1.0
         }
+            
+        switch currentLight {
+        case .red:
+            greenLight.alpha = lightIsOff
+            redLight.alpha = lightIsOn
+            currentLight = .yellow
+        case .yellow:
+            redLight.alpha = lightIsOff
+            yellowLight.alpha = lightIsOn
+            currentLight = .green
+        case .green:
+            yellowLight.alpha = lightIsOff
+            greenLight.alpha = lightIsOn
+            currentLight = .red
+        }
+    }
+}
+
+extension ViewController {
+    private enum CurrentLight {
+        case red,yellow,green
     }
 }
